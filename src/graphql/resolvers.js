@@ -1,5 +1,7 @@
 const axios = require('axios');
+const bcrypt = require('bcrypt'); 
 const User = require('../models/user');
+require('dotenv').config();
 
 const resolvers = {
     Mutation: {
@@ -12,10 +14,16 @@ const resolvers = {
                 console.log(`✅ User con ID ${id} eliminado en la base de Delete`);
 
                 // ✅ Notificar a los otros microservicios para sincronización
+          //      const instances = [
+         //           'http://127.0.0.1:5005/sync-delete', // Microservicio de Crear
+        //            'http://127.0.0.1:5007/sync-delete',  // Microservicio de Editar
+       //             'http://127.0.0.1:5006/sync-delete'  // Microservicio de Leer
+      //          ];
+
                 const instances = [
-                    'http://127.0.0.1:5005/sync-delete', // Microservicio de Crear
-                    'http://127.0.0.1:5007/sync-delete',  // Microservicio de Editar
-                    'http://127.0.0.1:5006/sync-delete'  // Microservicio de Leer
+                    `http://${process.env.DB_HOST}:5005/sync-delete`,  // Microservicio de Crear
+                    `http://${process.env.DB_HOST_UPDATE}:5007/sync-delete`, // Microservicio de Editar
+                    `http://${process.env.DB_HOST_READ}:5006/sync-delete` // Microservicio de Leer
                 ];
 
                 for (const instance of instances) {
